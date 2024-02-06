@@ -6,9 +6,9 @@
 ; *** without express written permission from the author.         ***
 ; *******************************************************************
 
-#include   ../macros.inc
-#include   ../bios.inc
-#include   ../kernel.inc
+#include   macros.inc
+#include   bios.inc
+#include   kernel.inc
 
               org       2000h
 begin:        br        start
