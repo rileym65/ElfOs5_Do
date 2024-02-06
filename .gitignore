@@ -1,0 +1,7 @@
+*.bin
+*.build
+*.l
+*.lst
+*.prg
+*.sym
+
