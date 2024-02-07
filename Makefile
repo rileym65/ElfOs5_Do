@@ -1,11 +1,12 @@
 PROJECT = do
 OBJS = $(PROJECT).prg
 INCDIR=../../Include
+LIBDIR=../../Lib
 INSTDIR=../../Image/bin
 .SUFFIXES: .asm .prg
 
 $(PROJECT).bin: $(OBJS)
-	link02 -s -S symbols.sym -e $(PROJECT).prg -l ../stdlib.lib -o $(PROJECT).bin
+	link02 -s -S symbols.sym -e $(PROJECT).prg -L $(LIBDIR) -l stdlib.lib -o $(PROJECT).bin
 
 .asm.prg:
 	asm02 -l -L -I$(INCDIR) $<

@@ -11,6 +11,9 @@
 #include   kernel.inc
 
               org       2000h
+
+              extrn     buildpath
+
 begin:        br        start
               eever
               db        'Written by Michael H. Riley',0
@@ -50,7 +53,16 @@ loop1:        lda       rf             ; look for first less <= space
               ldi       0ah
               sep       sret           ; and return to os
 
-good:         ldi       high fildes    ; get file descriptor
+good:         mov       ra,rf
+              mov       rf,cbuffer
+              call      buildpath
+              lbnf      gootpath
+              call      o_inmsg
+              db        'Invalid path',10,13,0
+              ldi       0bh
+              rtn
+gootpath:     mov       rf,cbuffer
+              ldi       high fildes    ; get file descriptor
               phi       rd
               ldi       low fildes
               plo       rd
@@ -274,7 +286,8 @@ f_dta:     dw      dta
 .suppress
 
 command:   ds      80
-cbuffer:   ds      80
+           db      0
+cbuffer:   ds      128
 dta:       ds      512
 
            end     begin
