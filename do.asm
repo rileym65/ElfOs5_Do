@@ -61,8 +61,7 @@ good:         mov       ra,rf
               db        'Invalid path',10,13,0
               ldi       0bh
               rtn
-gootpath:     mov       rf,cbuffer
-              ldi       high fildes    ; get file descriptor
+gootpath:     ldi       high fildes    ; get file descriptor
               phi       rd
               ldi       low fildes
               plo       rd
@@ -206,13 +205,40 @@ ret_2:        glo       re
               phi       rf
               ldi       command.0
               plo       rf
-              push      rb
-              push      rc
-              push      rd
+;              push      rb
+;              push      rc
+;              push      rd
+              ghi       rb
+              stxd
+              glo       rb
+              stxd
+              ghi       rc
+              stxd
+              glo       rc
+              stxd
+              ghi       rd
+              stxd
+              glo       rd
+              stxd
+              
               call      o_exec         ; and execute it
-              pop       rd
-              pop       rc
-              pop       rb
+              irx
+              ldxa
+              plo       rd
+              ldxa
+              phi       rd
+              ldxa
+              plo       rc
+              ldxa
+              phi       rc
+              ldxa
+              plo       rb
+              ldx
+              phi       rb
+
+;              pop       rd
+;              pop       rc
+;              pop       rb
               bdf       execbin        ; jump if erorr occured
 execgood:     ghi       r3             ; point to command line
               adi       1
@@ -223,20 +249,51 @@ execgood:     ghi       r3             ; point to command line
               ldx
               str       ra             ; store into command
               inc       ra
+              mov       r7,k_retval    ; get return value
+              ldn       r7
+              bnz       exit           ; exit on error
               br        mainlp         ; read next line
 execbin:      ghi       r3             ; point to command buffer
               adi       1
               phi       rf
               ldi       command.0
               plo       rf
-              push      rb
-              push      rc
-              push      rd
+
+;              push      rb
+;              push      rc
+;              push      rd
+              ghi       rb
+              stxd
+              glo       rb
+              stxd
+              ghi       rc
+              stxd
+              glo       rc
+              stxd
+              ghi       rd
+              stxd
+              glo       rd
+              stxd
+
               call      o_execbin
+
               bdf       execerr
-              pop       rd
-              pop       rc
-              pop       rb
+              irx
+              ldxa
+              plo       rd
+              ldxa
+              phi       rd
+              ldxa
+              plo       rc
+              ldxa
+              phi       rc
+              ldxa
+              plo       rb
+              ldx
+              phi       rb
+;              pop       rd
+;              pop       rc
+;              pop       rb
               br        execgood
 execerr:      irx
               br        execerr2
@@ -262,9 +319,7 @@ havechars:    dec       rc             ; decrement bytes available
               lda       rb             ; get next available byte
               adi       0              ; signal good read
               br        return
-badread:      call      o_inmsg        ; display error
-              db        'Err,10,13,0
-              ldi       1              ; signal bad read
+badread:      ldi       1              ; signal bad read
               lskp
 eof:          ldi       0              ; signal eof
               smi       0
